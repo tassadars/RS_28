@@ -1,2 +1,4 @@
-# RS_28
-Lesson 28
+sinatra-bootstrap-clean
+=======================
+
+Cleaned version of https://github.com/bootstrap-ruby/sinatra-bootstrap

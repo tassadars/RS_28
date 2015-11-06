@@ -19,6 +19,7 @@ configure do
 	(
 		id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
 		created_date DATETIME,
+		author TEXT, 
 		content TEXT
 	)'
 
@@ -44,13 +45,14 @@ end
 
 post '/new' do
 	content = params[:content]
+	author = params[:author]
 
-	if content.length <= 0
-		@error = 'Type post text'
+	if content.length <= 0 || author.length <= 0
+		@error = 'Type post author/text'
 		return erb :new
 	end
 
-	@db.execute 'INSERT INTO Posts (content, created_date) values (?, datetime())',[content]
+	@db.execute 'INSERT INTO Posts (author, content, created_date) values (?, ?, datetime())',[author, content]
 
 	redirect to '/'
 end

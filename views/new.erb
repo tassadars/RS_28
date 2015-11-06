@@ -1,9 +1,14 @@
-<h2>Add new post</h2>
+<h2>Add new post form</h2>
 <p>
-	We will add new post here
 </p>
 
 <form action="/new" method="POST" role="form">
+
+  <div class="form-group">
+    <label>Author</label>
+    <input name="author" type="text" class="form-control" id="exampleInputEmail1" placeholder="Author">
+  </div>
+    <label>Post</label>
 	<textarea name="content" class="form-control" rows="6" placeholder="Type text here"></textarea>
 	<br />
   	<button type="submit" class="btn btn-primary">Submit</button>

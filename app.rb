@@ -66,7 +66,6 @@ get '/details/:post_id' do
 
 	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
 	@row = results[0]
-
 	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
  
 	erb :details
@@ -78,7 +77,13 @@ post '/details/:post_id' do
 
 	if content.length <= 0 
 		@error = 'Enter content'
-		return redirect to '/details/' + post_id
+	
+		#duplicate code. Need to be changed
+		results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
+		@row = results[0]
+		@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
+
+		return erb :details
 	end
 
 	@db.execute 'INSERT INTO Comments (content, created_date, post_id) values (?, datetime(),?)',[content, post_id]

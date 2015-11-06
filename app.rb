@@ -44,15 +44,19 @@ get '/new' do
 end
 
 post '/new' do
-	content = params[:content]
-	author = params[:author]
+	@content = params[:content]
+	@author = params[:author]
 
-	if content.length <= 0 || author.length <= 0
-		@error = 'Type post author/text'
-		return erb :new
+	hh_v = {:author => 'Enter author',
+	        :content => 'Enter content'}
+
+	@error = hh_v.select {|key,_| params[key] == ""}.values.join(", ")
+	if @error != ''
+	    return erb :new
 	end
 
-	@db.execute 'INSERT INTO Posts (author, content, created_date) values (?, ?, datetime())',[author, content]
+
+	@db.execute 'INSERT INTO Posts (author, content, created_date) values (?, ?, datetime())',[@author, @content]
 
 	redirect to '/'
 end
@@ -71,6 +75,11 @@ end
 post '/details/:post_id' do
 	post_id =  params[:post_id]
 	content = params[:content]
+
+	if content.length <= 0 
+		@error = 'Enter content'
+		return redirect to '/details/' + post_id
+	end
 
 	@db.execute 'INSERT INTO Comments (content, created_date, post_id) values (?, datetime(),?)',[content, post_id]
 

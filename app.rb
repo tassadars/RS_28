@@ -14,7 +14,7 @@ end
 
 class Comment < ActiveRecord::Base
 	  validates :content, presence: true, length: {minimum: 3}
-	  belongs_to :post, :foreign_key => 'postID'
+	  belongs_to :posts, :foreign_key => 'postID'
 end
 
 get '/' do

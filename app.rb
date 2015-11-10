@@ -7,10 +7,13 @@ require 'sinatra/activerecord'
 set :database, "sqlite3:leprosorium.db"
 
 class Post < ActiveRecord::Base
-	  has_many :comments, :foreign_key => 'postID'
+	validates :author, presence: true, length: {minimum: 3}
+	validates :content, presence: true, length: {minimum: 3}
+	has_many :comments, :foreign_key => 'postID'
 end
 
 class Comment < ActiveRecord::Base
+	  validates :content, presence: true, length: {minimum: 3}
 	  belongs_to :post, :foreign_key => 'postID'
 end
 
@@ -21,7 +24,7 @@ end
 
 
 before '/new' do
-  @c = Comment.new  
+  @p = Post.new  
 end
 
 get '/new' do
@@ -29,11 +32,11 @@ get '/new' do
 end
 
 post '/new' do
-	@c = Comment.new params[:comment]
-	if @c.save
+	@p = Post.new params[:post]
+	if @p.save
 		redirect to '/' 
 	else
-		@error = @c.errors.full_messages.first
+		@error = @p.errors.full_messages.first
   		erb :new
   	end
 end

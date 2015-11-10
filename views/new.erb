@@ -6,10 +6,10 @@
 
   <div class="form-group">
     <label>Author</label>
-    <input name="author" value="<%= @author %>" type="text" class="form-control" placeholder="Author">
+    <input name="post[author]" value="<%= @p.author %>" type="text" class="form-control" placeholder="Author">
   </div>
     <label>Post</label>
-	<textarea name="content" class="form-control" rows="6" placeholder="Type text here"><%= @content %></textarea>
+	<textarea name="post[content]" class="form-control" rows="6" placeholder="Type text here"><%= @p.content %></textarea>
 	<br />
   	<button type="submit" class="btn btn-primary">Submit</button>
 </form>

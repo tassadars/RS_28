@@ -2,41 +2,26 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/reloader'
-require 'sqlite3'
+require 'sinatra/activerecord'
 
-def init_db
-	@db = SQLite3::Database.new 'leprosorium.db'
-	@db.results_as_hash = true
+set :database, "sqlite3:leprosorium.db"
+
+class Post < ActiveRecord::Base
+	  has_many :comments, :foreign_key => 'postID'
 end
 
-before do
-	init_db
+class Comment < ActiveRecord::Base
+	  belongs_to :post, :foreign_key => 'postID'
 end
-
-configure do 
-	init_db
-	@db.execute 'CREATE TABLE IF NOT EXISTS Posts
-	(
-		id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
-		created_date DATETIME,
-		author TEXT, 
-		content TEXT
-	)'
-
-	@db.execute 'CREATE TABLE IF NOT EXISTS Comments
-	(
-		id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
-		created_date DATETIME, 
-		content TEXT,
-		post_id INTEGER
-	)'
-
-end
-
 
 get '/' do
-	@results = @db.execute 'SELECT * FROM Posts ORDER BY id DESC'
+	@results = Post.order "id DESC"
 	erb :index
+end
+
+
+before '/new' do
+  @c = Comment.new  
 end
 
 get '/new' do
@@ -44,29 +29,21 @@ get '/new' do
 end
 
 post '/new' do
-	@content = params[:content]
-	@author = params[:author]
-
-	hh_v = {:author => 'Enter author',
-	        :content => 'Enter content'}
-
-	@error = hh_v.select {|key,_| params[key] == ""}.values.join(", ")
-	if @error != ''
-	    return erb :new
-	end
-
-
-	@db.execute 'INSERT INTO Posts (author, content, created_date) values (?, ?, datetime())',[@author, @content]
-
-	redirect to '/'
+	@c = Comment.new params[:comment]
+	if @c.save
+		redirect to '/' 
+	else
+		@error = @c.errors.full_messages.first
+  		erb :new
+  	end
 end
 
 get '/details/:post_id' do
 	post_id =  params[:post_id]
 
-	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-	@row = results[0]
-	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
+#	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
+#	@row = results[0]
+#	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
  
 	erb :details
 end
@@ -79,14 +56,14 @@ post '/details/:post_id' do
 		@error = 'Enter content'
 	
 		#duplicate code. Need to be changed
-		results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-		@row = results[0]
-		@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
+	#	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
+	#	@row = results[0]
+	#	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
 
 		return erb :details
 	end
 
-	@db.execute 'INSERT INTO Comments (content, created_date, post_id) values (?, datetime(),?)',[content, post_id]
+	#@db.execute 'INSERT INTO Comments (content, created_date, post_id) values (?, datetime(),?)',[content, post_id]
 
 	redirect to '/details/' + post_id
 end 

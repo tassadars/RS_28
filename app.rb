@@ -44,7 +44,7 @@ end
 before '/details/:post_id' do
 	post_id =  params[:post_id]
 	@row = Post.find(post_id)
-	@comments = Comment.where(postID = post_id) 
+	@comments = Comment.where('post_id = ?',[post_id]) 
 end
 
 

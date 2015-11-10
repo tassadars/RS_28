@@ -44,6 +44,9 @@ end
 get '/details/:post_id' do
 	post_id =  params[:post_id]
 
+	@row = Post.find(post_id)
+	@comments = Comment.select(:post_id) 
+
 #	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
 #	@row = results[0]
 #	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]

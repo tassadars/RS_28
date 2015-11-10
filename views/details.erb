@@ -2,29 +2,29 @@
 <br />
 <p>
 	<p> 
-		<span style= "font-weight:bold;"><%= @row['author'] %></span>
+		<span style= "font-weight:bold;"><%= @row.author %></span>
 	<br />
 
-	<%= @row['content'] %>
+	<%= @row.content %>
 	<br />
 	<br />
 
-	<span style= "font-size: 75%">Added at <%= @row['created_date'] %></span>
+	<span style= "font-size: 75%">Added at <%= @row.created_at %></span>
 </p>
 
 <h4>Comments: </h4>
 <br />
 <% @comments.each do |comment| %>
 	<p> 
-		<%= comment['content'] %> 
+		<%= comment.content %> 
 		<br />
-		<span style= "font-size: 75%; color: #999"><%= comment['created_date'] %></span>
+		<span style= "font-size: 75%; color: #999"><%= comment.created_at %></span>
 	<br />
 	<hr />
 <% end %>
 <p>
-	<form action="/details/<%= @row['id'] %>" method="POST" role="form">
-		<textarea name="content" class="form-control" rows="6" placeholder="Type comment text here"></textarea>
+	<form action="/details/<%= @row.id %>" method="POST" role="form">
+		<textarea name="comment[content]" class="form-control" rows="6" placeholder="Type comment text here"></textarea>
 		<br />
 	  	<button type="submit" class="btn btn-primary">Add comment</button>
 	</form>

@@ -41,35 +41,26 @@ post '/new' do
   	end
 end
 
-get '/details/:post_id' do
+before '/details/:post_id' do
 	post_id =  params[:post_id]
-
 	@row = Post.find(post_id)
-	@comments = Comment.select(:post_id) 
+	@comments = Comment.where(postID = post_id) 
+end
 
-#	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-#	@row = results[0]
-#	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
- 
+
+get '/details/:post_id' do
 	erb :details
 end
 
 post '/details/:post_id' do
-	post_id =  params[:post_id]
-	content = params[:content]
-
-	if content.length <= 0 
-		@error = 'Enter content'
-	
-		#duplicate code. Need to be changed
-	#	results = @db.execute 'SELECT * FROM Posts WHERE id = ?', [post_id]
-	#	@row = results[0]
-	#	@comments = @db.execute 'SELECT * FROM Comments WHERE post_id = ? order by id', [post_id]
-
+	@c = Comment.new params[:comment]
+	@c.post_id = params[:post_id]
+	if @c.save
 		return erb :details
+#		redirect to '/details/' + post_id
+	else
+		@error = @c.errors.full_messages.first
+  		erb :details
 	end
 
-	#@db.execute 'INSERT INTO Comments (content, created_date, post_id) values (?, datetime(),?)',[content, post_id]
-
-	redirect to '/details/' + post_id
 end 
